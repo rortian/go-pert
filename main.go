@@ -17,7 +17,7 @@ func (p *SingPert) step(z complex128) complex128 {
 }
 
 func main(){
-  fmt.Println("hi")
   pert := SingPert{ 2,2,0.001i }
   fmt.Printf("%v\n",pert)
+  fmt.Printf("%v\n",pert.step(0.5+0.5i))
 }
