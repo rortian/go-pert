@@ -40,9 +40,22 @@ func (p *SingPert) Escape(z complex128) int {
   return i
 }
 
+type Grid struct {
+  x,y int
+  x_max,y_max,x_min,y_min float64
+}
+
+func (g *Grid) Escape() [][]uint16 {
+  ret := make([][]uint16,g.x)
+  return ret
+}
+
 func main(){
   pert := SingPert{ 2,2,0.001i }
   fmt.Printf("%v\n",pert)
   fmt.Printf("%v\n",pert.Step(0.5+0.5i))
   pert.Escape(0.5+0.5i)
+  grid := Grid { 100,100,1,1,-1,-1 }
+  hmm := grid.Escape()
+  fmt.Printf("%v\n",hmm)
 }
