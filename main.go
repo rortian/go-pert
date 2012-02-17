@@ -47,6 +47,9 @@ type Grid struct {
 
 func (g *Grid) Escape() [][]uint16 {
   ret := make([][]uint16,g.x)
+  for i,_ := range ret {
+    ret[i] = make([]uint16,g.y)
+  }
   return ret
 }
 
@@ -58,4 +61,5 @@ func main(){
   grid := Grid { 100,100,1,1,-1,-1 }
   hmm := grid.Escape()
   fmt.Printf("%v\n",hmm)
+  fmt.Printf("%v\n",cap(hmm[0]))
 }
