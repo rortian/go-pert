@@ -2,7 +2,6 @@
 package main
 
 import(
-  "fmt"
   "math/cmplx"
 )
 
@@ -30,12 +29,11 @@ func (p *SingPert) Path(z complex128) chan complex128 {
   return c
 }
 
-func (p *SingPert) Escape(z complex128) int {
+func (p *SingPert) Escape(z complex128) uint16 {
   c := p.Path(z)
-  i := 0
+  i := uint16(0)
   for current := <- c ; cmplx.Abs(current) < 3 ; current = <- c {
     i++
-    fmt.Printf("%v\t%v\n",current,cmplx.Abs(current))
   }
   return i
 }
@@ -43,23 +41,42 @@ func (p *SingPert) Escape(z complex128) int {
 type Grid struct {
   x,y int
   x_max,y_max,x_min,y_min float64
+  *SingPert
+  Count *chan bool
 }
 
-func (g *Grid) Escape() [][]uint16 {
+func (g *Grid) Solve() [][]uint16 {
   ret := make([][]uint16,g.x)
+  x_delta := (g.x_max - g.x_min)/ float64(g.x - 1)
+  y_delta := (g.y_max - g.y_min)/ float64(g.y - 1)
   for i,_ := range ret {
+    x_current := g.x_min + float64(i)*x_delta
     ret[i] = make([]uint16,g.y)
+    go g.CalcRow(ret[i],complex(x_current,0),y_delta)
   }
   return ret
 }
 
+func (g *Grid) CalcRow(row []uint16,x complex128,y_delta float64){
+  for i := range row {
+    go func(y int){
+      pos := x + complex(0,g.y_max-y_delta*float64(y))
+      row[y] = g.Escape(pos)
+      *g.Count<-true
+    }(i)
+  }
+}
+
+
 func main(){
   pert := SingPert{ 2,2,0.001i }
-  fmt.Printf("%v\n",pert)
-  fmt.Printf("%v\n",pert.Step(0.5+0.5i))
-  pert.Escape(0.5+0.5i)
-  grid := Grid { 100,100,1,1,-1,-1 }
-  hmm := grid.Escape()
-  fmt.Printf("%v\n",hmm)
-  fmt.Printf("%v\n",cap(hmm[0]))
+  counting := make(chan bool,5*100)
+  grid := Grid { 100, 100, 1, 1, -1, -1, &pert, &counting }
+  grid.Solve()
+  count := 100*100
+  for count > 0 {
+    select {
+      case <-counting:count--
+      }
+  }
 }
