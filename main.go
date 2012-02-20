@@ -36,6 +36,7 @@ func (p *SingPert) Escape(z complex128) uint16 {
   for current := <- c ; cmplx.Abs(current) < 3 ; current = <- c {
     i++
   }
+  runtime.Goexit()
   return i
 }
 
