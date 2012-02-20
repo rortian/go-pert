@@ -64,6 +64,7 @@ func (g *Grid) CalcRow(row []uint16,x complex128,y_delta float64){
       row[y] = g.Escape(pos)
     }(i)
   }
+  defer runtime.Goexit()
 }
 
 
@@ -76,6 +77,5 @@ func main(){
     fmt.Printf("There are %v goroutines now\n",runtime.Goroutines())
     time.Sleep(time.Millisecond*100)
     fmt.Printf("%v\n",hi[3])
-
   }
 }
