@@ -3,6 +3,8 @@ package main
 
 import(
   "math/cmplx"
+  "fmt"
+  "time"
 )
 
 type SingPert struct {
@@ -16,13 +18,11 @@ func (p *SingPert) Step(z complex128) complex128 {
 }
 
 func (p *SingPert) Path(z complex128) chan complex128 {
-  c := make(chan complex128,5)
+  c := make(chan complex128)
   go func(){
     current := z
     for {
-      select {
-        case c <- current:
-      }
+      c <- current
       current = p.Step(current)
     }
   }()
@@ -42,7 +42,6 @@ type Grid struct {
   x,y int
   x_max,y_max,x_min,y_min float64
   *SingPert
-  Count *chan bool
 }
 
 func (g *Grid) Solve() [][]uint16 {
@@ -59,10 +58,9 @@ func (g *Grid) Solve() [][]uint16 {
 
 func (g *Grid) CalcRow(row []uint16,x complex128,y_delta float64){
   for i := range row {
-    go func(y int){
+    func(y int){
       pos := x + complex(0,g.y_max-y_delta*float64(y))
       row[y] = g.Escape(pos)
-      *g.Count<-true
     }(i)
   }
 }
@@ -70,13 +68,8 @@ func (g *Grid) CalcRow(row []uint16,x complex128,y_delta float64){
 
 func main(){
   pert := SingPert{ 2,2,0.001i }
-  counting := make(chan bool,5*100)
-  grid := Grid { 100, 100, 1, 1, -1, -1, &pert, &counting }
-  grid.Solve()
-  count := 100*100
-  for count > 0 {
-    select {
-      case <-counting:count--
-      }
-  }
+  grid := Grid { 100, 100, 1, 1, -1, -1, &pert }
+  hi := grid.Solve()
+  time.Sleep(200*time.Millisecond)
+  fmt.Println("%v\n",hi[3])
 }
