@@ -5,6 +5,7 @@ import(
   "math/cmplx"
   "fmt"
   "time"
+  "runtime"
 )
 
 type SingPert struct {
@@ -67,9 +68,10 @@ func (g *Grid) CalcRow(row []uint16,x complex128,y_delta float64){
 
 
 func main(){
+  fmt.Printf("There are %v goroutines now",runtime.Goroutines())
   pert := SingPert{ 2,2,0.001i }
   grid := Grid { 100, 100, 1, 1, -1, -1, &pert }
   hi := grid.Solve()
   time.Sleep(200*time.Millisecond)
-  fmt.Println("%v\n",hi[3])
+  fmt.Printf("%v\n",hi[3])
 }
