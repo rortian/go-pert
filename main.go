@@ -65,6 +65,7 @@ func (g *Grid) CalcRow(row []uint16,x complex128,y_delta float64){
       row[y] = g.Escape(pos)
     }(i)
   }
+  runtime.Goexit()
 }
 
 
