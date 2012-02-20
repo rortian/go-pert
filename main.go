@@ -36,6 +36,7 @@ func (p *SingPert) Escape(z complex128) uint16 {
   for current := <- c ; cmplx.Abs(current) < 3 ; current = <- c {
     i++
   }
+  runtime.GC()
   return i
 }
 
@@ -64,7 +65,6 @@ func (g *Grid) CalcRow(row []uint16,x complex128,y_delta float64){
       row[y] = g.Escape(pos)
     }(i)
   }
-  runtime.Goexit()
 }
 
 
