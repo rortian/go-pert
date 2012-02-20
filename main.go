@@ -77,7 +77,7 @@ func main(){
   for runtime.Goroutines() > 1 {
     fmt.Printf("There are %v goroutines now\n",runtime.Goroutines())
     time.Sleep(time.Millisecond*100)
+    fmt.Printf("%v\n",hi[3])
 
   }
-  fmt.Printf("%v\n",hi[3])
 }
