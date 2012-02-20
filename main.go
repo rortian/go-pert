@@ -72,6 +72,10 @@ func main(){
   pert := SingPert{ 2,2,0.001i }
   grid := Grid { 100, 100, 1, 1, -1, -1, &pert }
   hi := grid.Solve()
-  time.Sleep(200*time.Millisecond)
+  for runtime.Goroutines() > 1 {
+    fmt.Printf("There are %v goroutines now\n",runtime.Goroutines())
+    time.Sleep(time.Millisecond*100)
+
+  }
   fmt.Printf("%v\n",hi[3])
 }
