@@ -6,6 +6,7 @@ import(
   "fmt"
   "time"
   "runtime"
+  "flag"
 )
 
 type SingPert struct {
@@ -36,7 +37,6 @@ func (p *SingPert) Escape(z complex128) uint16 {
   for current := <- c ; cmplx.Abs(current) < 3 ; current = <- c {
     i++
   }
-  runtime.GC()
   return i
 }
 
@@ -69,6 +69,10 @@ func (g *Grid) CalcRow(row []uint16,x complex128,y_delta float64){
 
 
 func main(){
+  var m int
+  flag.IntVar(&m,"m",2,"the m in z^m + lambda / z^n")
+  flag.Parse()
+  fmt.Printf("m is %v",m)
   fmt.Printf("There are %v goroutines now",runtime.Goroutines())
   pert := SingPert{ 2,2,0.001i }
   grid := Grid { 100, 100, 1, 1, -1, -1, &pert }
