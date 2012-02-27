@@ -91,7 +91,7 @@ func main(){
   fmt.Printf("m is %v",m)
   fmt.Printf("There are %v goroutines now",runtime.Goroutines())
   pert := SingPert{ complex(m,0),complex(n,0),complex(lambda_x,lambda_y) }
-  grid := Grid { 100, 100, 1, 1, -1, -1, &pert }
+  grid := Grid { width, height, x_max, y_max, x_min, y_min, &pert }
   hi := grid.Solve()
   for runtime.Goroutines() > 1 {
     fmt.Printf("There are %v goroutines now\n",runtime.Goroutines())
