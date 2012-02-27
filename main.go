@@ -76,6 +76,7 @@ func (g *Grid) CalcRow(row []uint16,x complex128,y_delta float64,row_num int){
 func main(){
   var width,height int
   var m,n,lambda_x,lambda_y,x_min,x_max,y_min,y_max float64
+
   flag.Float64Var(&m,"m",2,"the m in z^m + lambda / z^n")
   flag.Float64Var(&n,"n",2,"the n in z^m + lambda / z^n")
 
