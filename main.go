@@ -3,9 +3,6 @@ package main
 
 import(
   "math/cmplx"
-  "fmt"
-  "time"
-  "runtime"
   "flag"
 )
 
@@ -52,6 +49,7 @@ type Grid struct {
   x,y int
   x_max,y_max,x_min,y_min float64
   *SingPert
+  finished chan int
 }
 
 func (g *Grid) Solve() [][]uint16 {
@@ -61,18 +59,17 @@ func (g *Grid) Solve() [][]uint16 {
   for i,_ := range ret {
     x_current := g.x_min + float64(i)*x_delta
     ret[i] = make([]uint16,g.y)
-    go g.CalcRow(ret[i],complex(x_current,0),y_delta)
+    go g.CalcRow(ret[i],complex(x_current,0),y_delta,i)
   }
   return ret
 }
 
-func (g *Grid) CalcRow(row []uint16,x complex128,y_delta float64){
+func (g *Grid) CalcRow(row []uint16,x complex128,y_delta float64,row_num int){
   for i := range row {
-    func(y int){
-      pos := x + complex(0,g.y_max-y_delta*float64(y))
-      row[y] = g.EscapeS(pos)
-    }(i)
+    pos := x + complex(0,g.y_max-y_delta*float64(i))
+    row[i] = g.EscapeS(pos)
   }
+  g.finished <- row_num
 }
 
 
@@ -96,14 +93,16 @@ func main(){
 
   flag.Parse()
 
-  fmt.Printf("m is %v",m)
-  fmt.Printf("There are %v goroutines now",runtime.Goroutines())
+  finished := make(chan int,height)
+
   pert := SingPert{ complex(m,0),complex(n,0),complex(lambda_x,lambda_y) }
-  grid := Grid { width, height, x_max, y_max, x_min, y_min, &pert }
-  hi := grid.Solve()
-  for runtime.Goroutines() > 1 {
-    fmt.Printf("There are %v goroutines now\n",runtime.Goroutines())
-    time.Sleep(time.Millisecond*100)
-    fmt.Printf("%v\n",hi[3])
+  grid := Grid { width, height, x_max, y_max, x_min, y_min, &pert,finished }
+  grid.Solve()
+
+  for needs := height; needs > 0; needs-- {
+    select {
+      case num := <-finished:
+        num++
+    }
   }
 }
