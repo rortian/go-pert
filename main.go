@@ -40,6 +40,14 @@ func (p *SingPert) Escape(z complex128) uint16 {
   return i
 }
 
+func (p *SingPert) EscapeS(z complex128) uint16 {
+  i := uint16(0)
+  for current := z ; cmplx.Abs(current) < 3 ; i++ {
+    current = p.Step(current)
+  }
+  return i
+}
+
 type Grid struct {
   x,y int
   x_max,y_max,x_min,y_min float64
@@ -62,7 +70,7 @@ func (g *Grid) CalcRow(row []uint16,x complex128,y_delta float64){
   for i := range row {
     func(y int){
       pos := x + complex(0,g.y_max-y_delta*float64(y))
-      row[y] = g.Escape(pos)
+      row[y] = g.EscapeS(pos)
     }(i)
   }
 }
