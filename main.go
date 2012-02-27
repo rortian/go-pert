@@ -80,11 +80,11 @@ func main(){
   flag.IntVar(&width,"width",100,"the width of the image")
   flag.IntVar(&height,"height",100,"the height of the image")
 
-  flag.Float64Var(&x_min,"x_min",-1.5,"the minimum x value of the image")
-  flag.Float64Var(&x_max,"x_max",1.5,"the maximum x value of the image")
+  flag.Float64Var(&x_min,"x_min",-1,"the minimum x value of the image")
+  flag.Float64Var(&x_max,"x_max",1,"the maximum x value of the image")
 
-  flag.Float64Var(&y_min,"y_min",-1.5,"the minimum y value of the image")
-  flag.Float64Var(&y_max,"y_max",1.5,"the maximum y value of the image")
+  flag.Float64Var(&y_min,"y_min",-1,"the minimum y value of the image")
+  flag.Float64Var(&y_max,"y_max",1,"the maximum y value of the image")
 
   flag.Parse()
 
