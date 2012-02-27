@@ -69,9 +69,25 @@ func (g *Grid) CalcRow(row []uint16,x complex128,y_delta float64){
 
 
 func main(){
-  var m int
+  var m,n,width,height int
+  var lambda_x,lambda_y,x_min,x_max,y_min,y_max float64
   flag.IntVar(&m,"m",2,"the m in z^m + lambda / z^n")
+  flag.IntVar(&n,"n",2,"the n in z^m + lambda / z^n")
+
+  flag.Float64Var(&lambda_x,"lx",1e-6,"the real part of lambda in z^m + lambda / z^n")
+  flag.Float64Var(&lambda_y,"ly",0,"the imaginary part of lambda in z^m + lambda / z^n")
+
+  flag.IntVar(&width,"width",100,"the width of the image")
+  flag.IntVar(&height,"height",100,"the height of the image")
+
+  flag.Float64Var(&x_min,"x_min",-1.5,"the minimum x value of the image")
+  flag.Float64Var(&x_max,"x_max",1.5,"the maximum x value of the image")
+
+  flag.Float64Var(&y_min,"y_min",-1.5,"the minimum y value of the image")
+  flag.Float64Var(&y_max,"y_max",1.5,"the maximum y value of the image")
+
   flag.Parse()
+
   fmt.Printf("m is %v",m)
   fmt.Printf("There are %v goroutines now",runtime.Goroutines())
   pert := SingPert{ 2,2,0.001i }
