@@ -69,10 +69,10 @@ func (g *Grid) CalcRow(row []uint16,x complex128,y_delta float64){
 
 
 func main(){
-  var m,n,width,height int
-  var lambda_x,lambda_y,x_min,x_max,y_min,y_max float64
-  flag.IntVar(&m,"m",2,"the m in z^m + lambda / z^n")
-  flag.IntVar(&n,"n",2,"the n in z^m + lambda / z^n")
+  var width,height int
+  var m,n,lambda_x,lambda_y,x_min,x_max,y_min,y_max float64
+  flag.Float64Var(&m,"m",2,"the m in z^m + lambda / z^n")
+  flag.Float64Var(&n,"n",2,"the n in z^m + lambda / z^n")
 
   flag.Float64Var(&lambda_x,"lx",1e-6,"the real part of lambda in z^m + lambda / z^n")
   flag.Float64Var(&lambda_y,"ly",0,"the imaginary part of lambda in z^m + lambda / z^n")
@@ -90,7 +90,7 @@ func main(){
 
   fmt.Printf("m is %v",m)
   fmt.Printf("There are %v goroutines now",runtime.Goroutines())
-  pert := SingPert{ 2,2,0.001i }
+  pert := SingPert{ complex(m,0),complex(n,0),complex(lambda_x,lambda_y) }
   grid := Grid { 100, 100, 1, 1, -1, -1, &pert }
   hi := grid.Solve()
   for runtime.Goroutines() > 1 {
