@@ -4,6 +4,9 @@ package main
 import(
   "math/cmplx"
   "flag"
+  "image"
+  "image/color"
+  "fmt"
 )
 
 type SingPert struct {
@@ -99,6 +102,16 @@ func main(){
   pert := SingPert{ complex(m,0),complex(n,0),complex(lambda_x,lambda_y) }
   grid := Grid { width, height, x_max, y_max, x_min, y_min, &pert,finished }
   grid.Solve()
+
+  image.NewNRGBA(image.Rect(0,0,width,height))
+
+  red := color.NRGBA{ 0xFF,0,0,0xFF }
+  blue := color.NRGBA{ 0,0xFF,0,0xFF }
+  green := color.NRGBA{ 0,0,0xFF,0xFF }
+
+  simple := [...]color.Color{ red,blue,green }
+
+  fmt.Printf("%v is simple\n",simple)
 
   for needs := height; needs > 0; needs-- {
     select {
