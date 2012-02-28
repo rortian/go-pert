@@ -6,7 +6,9 @@ import(
   "flag"
   "image"
   "image/color"
+  "image/png"
   "fmt"
+  "os"
 )
 
 type SingPert struct {
@@ -101,9 +103,9 @@ func main(){
 
   pert := SingPert{ complex(m,0),complex(n,0),complex(lambda_x,lambda_y) }
   grid := Grid { width, height, x_max, y_max, x_min, y_min, &pert,finished }
-  grid.Solve()
+  rows := grid.Solve()
 
-  image.NewNRGBA(image.Rect(0,0,width,height))
+  img := image.NewNRGBA(image.Rect(0,0,width,height))
 
   red := color.NRGBA{ 0xFF,0,0,0xFF }
   blue := color.NRGBA{ 0,0xFF,0,0xFF }
@@ -111,12 +113,19 @@ func main(){
 
   simple := [...]color.Color{ red,blue,green }
 
+  out,_ := os.Create("fun.png")
+  defer out.Close()
+
   fmt.Printf("%v is simple\n",simple)
 
   for needs := height; needs > 0; needs-- {
     select {
-      case num := <-finished:
-        num++
+      case x := <-finished:
+        for y,speed := range rows[x] {
+          img.Set(x,y,simple[speed % 3])
+        }
     }
   }
+
+  png.Encode(out,img)
 }
