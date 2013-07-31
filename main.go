@@ -1,12 +1,16 @@
 package main
 
 import (
+	"bytes"
 	"flag"
 	"fmt"
 	"image"
 	"image/color"
 	"image/png"
+	"io"
+	"log"
 	"math/cmplx"
+	"net/http"
 	"os"
 )
 
@@ -86,8 +90,8 @@ func main() {
 	flag.Float64Var(&lambda_x, "lx", 1e-6, "the real part of lambda in z^m + lambda / z^n")
 	flag.Float64Var(&lambda_y, "ly", 0, "the imaginary part of lambda in z^m + lambda / z^n")
 
-	flag.IntVar(&width, "width", 100, "the width of the image")
-	flag.IntVar(&height, "height", 100, "the height of the image")
+	flag.IntVar(&width, "width", 500, "the width of the image")
+	flag.IntVar(&height, "height", 500, "the height of the image")
 
 	flag.Float64Var(&x_min, "x_min", -1, "the minimum x value of the image")
 	flag.Float64Var(&x_max, "x_max", 1, "the maximum x value of the image")
@@ -125,5 +129,15 @@ func main() {
 		}
 	}
 
+	var b bytes.Buffer
+	png.Encode(&b, img)
+
+	http.HandleFunc("/fractal", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "image/png")
+		rdbuf := bytes.NewReader(b.Bytes())
+		io.Copy(w, rdbuf)
+	})
+
 	png.Encode(out, img)
+	log.Fatal(http.ListenAndServe(":8899", nil))
 }
