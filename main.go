@@ -80,6 +80,44 @@ func (g *Grid) CalcRow(row []uint16, x complex128, y_delta float64, row_num int)
 	g.finished <- row_num
 }
 
+func init() {
+	http.HandleFunc("/fractals", errorHandler(fractalHandler))
+}
+
+func errorHandler(f func(http.ResponseWriter, *http.Request) error) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		err := f(w, r)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			log.Printf("handling %q: %v", r.RequestURI, err)
+		}
+	}
+}
+
+type Colorer interface {
+	Colorize(uint16) color.Color
+}
+
+type Paintable interface {
+	Set(int, int, color.Color)
+}
+
+type Painter interface {
+	PaintFrac([][]uint16, Paintable)
+}
+
+type SimpColors struct {
+	Colors []color.Color
+}
+
+func (s *SimpColors) Colorize(n uint16) color.Color {
+	return s.Colors[int(n)%len(s.Colors)]
+}
+
+func fractalHandler(w http.ResponseWriter, r *http.Request) error {
+	return nil
+}
+
 func main() {
 	var width, height int
 	var m, n, lambda_x, lambda_y, x_min, x_max, y_min, y_max float64
