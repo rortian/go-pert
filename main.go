@@ -102,8 +102,13 @@ type Paintable interface {
 	Set(int, int, color.Color)
 }
 
+type ColorPaint interface {
+	Colorer
+	Paintable
+}
+
 type Painter interface {
-	PaintFrac([][]uint16, Paintable)
+	PaintFrac([][]uint16)
 }
 
 type SimpColors struct {
@@ -114,10 +119,15 @@ func (s *SimpColors) Colorize(n uint16) color.Color {
 	return s.Colors[int(n)%len(s.Colors)]
 }
 
-func PaintFrac(vs [][]uint16, c Colorer, p Paintable) {
+type SimplePaint struct {
+	Colorer
+	Paintable
+}
+
+func (s *SimplePaint) PaintFrac(vs [][]uint16) {
 	for x, _ := range vs {
 		for y, speed := range vs[x] {
-			p.Set(x, y, c.Colorize(speed))
+			s.Set(x, y, s.Colorize(speed))
 		}
 	}
 }
