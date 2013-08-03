@@ -1,9 +1,7 @@
 package paint
 
 import (
-  "image"
   "image/color"
-  "image/png"
 )
 
 type Colorer interface {
