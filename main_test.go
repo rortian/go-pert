@@ -25,8 +25,6 @@ var x_max = 1.5
 var y_min = -1.5
 var y_max = 1.5
 
-var finished = make(chan int, height)
-
 var pert = fractal.SingPert{complex(m, 0), complex(n, 0), complex(lambda_x, lambda_y)}
 var grid2 = fractal.Grid{width, height, x_max, y_max, x_min, y_min, &pert, &sync.WaitGroup{}}
 
