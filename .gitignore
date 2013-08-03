@@ -1,4 +1,6 @@
 *.out
 .*.sw*
 main
-
+src/
+pkg/
+go-pert
