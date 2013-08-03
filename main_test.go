@@ -26,8 +26,8 @@ var y_max = 1.5
 
 var finished = make(chan int, height)
 
-var pert = SingPert{complex(m, 0), complex(n, 0), complex(lambda_x, lambda_y)}
-var grid2 = Grid{width, height, x_max, y_max, x_min, y_min, &pert, &sync.WaitGroup{}}
+var pert = fractal.SingPert{complex(m, 0), complex(n, 0), complex(lambda_x, lambda_y)}
+var grid2 = fractal.Grid{width, height, x_max, y_max, x_min, y_min, &pert, &sync.WaitGroup{}}
 
 var img2 = image.NewNRGBA(image.Rect(0, 0, width, height))
 
@@ -37,7 +37,7 @@ var green = color.NRGBA{0, 0, 0xFF, 0xFF}
 
 var simple = []color.Color{red, blue, green}
 
-var first = &SimplePaint{&SimpColors{simple}, img2}
+var first = &paint.SimplePaint{&paint.SimpColors{simple}, img2}
 
 func TestGrid(t *testing.T) {
 	first.PaintFrac(grid2.Solve())
