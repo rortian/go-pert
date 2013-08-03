@@ -12,6 +12,7 @@ import (
 	"math/cmplx"
 	"net/http"
 	"os"
+	"sync"
 )
 
 type SingPert struct {
@@ -60,6 +61,13 @@ type Grid struct {
 	finished chan int
 }
 
+type GridWG struct {
+	x, y                       int
+	x_max, y_max, x_min, y_min float64
+	*SingPert
+	*sync.WaitGroup
+}
+
 func (g *Grid) Solve() [][]uint16 {
 	ret := make([][]uint16, g.x)
 	x_delta := (g.x_max - g.x_min) / float64(g.x-1)
@@ -72,12 +80,38 @@ func (g *Grid) Solve() [][]uint16 {
 	return ret
 }
 
+func (g *GridWG) Solve() [][]uint16 {
+	ret := make([][]uint16, g.x)
+	g.Add(g.x)
+	x_delta := (g.x_max - g.x_min) / float64(g.x-1)
+	y_delta := (g.y_max - g.y_min) / float64(g.y-1)
+	for i, _ := range ret {
+		x_current := g.x_min + float64(i)*x_delta
+		ret[i] = make([]uint16, g.y)
+		go g.CalcRow(ret[i], complex(x_current, 0), y_delta, i)
+	}
+	g.Wait()
+	return ret
+}
+
 func (g *Grid) CalcRow(row []uint16, x complex128, y_delta float64, row_num int) {
 	for i := range row {
 		pos := x + complex(0, g.y_max-y_delta*float64(i))
 		row[i] = g.EscapeS(pos)
 	}
 	g.finished <- row_num
+}
+
+func init() {
+	http.HandleFunc("/heyfractals", errorHandler(fractalHandler))
+}
+
+func (g *GridWG) CalcRow(row []uint16, x complex128, y_delta float64, row_num int) {
+	for i := range row {
+		pos := x + complex(0, g.y_max-y_delta*float64(i))
+		row[i] = g.EscapeS(pos)
+	}
+	g.Done()
 }
 
 func init() {
@@ -161,15 +195,22 @@ func main() {
 
 	pert := SingPert{complex(m, 0), complex(n, 0), complex(lambda_x, lambda_y)}
 	grid := Grid{width, height, x_max, y_max, x_min, y_min, &pert, finished}
+	grid2 := GridWG{width, height, x_max, y_max, x_min, y_min, &pert, &sync.WaitGroup{}}
 	rows := grid.Solve()
 
 	img := image.NewNRGBA(image.Rect(0, 0, width, height))
+	img2 := image.NewNRGBA(image.Rect(0, 0, width, height))
 
 	red := color.NRGBA{0xFF, 0, 0, 0xFF}
 	blue := color.NRGBA{0, 0xFF, 0, 0xFF}
 	green := color.NRGBA{0, 0, 0xFF, 0xFF}
 
-	simple := [...]color.Color{red, blue, green}
+	simple := []color.Color{red, blue, green}
+
+	first := &SimplePaint{&SimpColors{simple}, img2}
+	first.PaintFrac(grid2.Solve())
+
+	fmt.Printf("%v", first)
 
 	out, _ := os.Create("fun.png")
 	defer out.Close()
@@ -186,7 +227,7 @@ func main() {
 	}
 
 	var b bytes.Buffer
-	png.Encode(&b, img)
+	png.Encode(&b, img2)
 
 	http.HandleFunc("/fractal", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "image/png")
