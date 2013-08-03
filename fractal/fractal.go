@@ -24,8 +24,8 @@ func Power(z complex128,n int) complex128 {
 }
 
 func (p *SingPert) Step(z complex128) complex128 {
-	zm := Power(z, p.M)
-	zn := Power(z, p.N)
+	zm := math.Pow(z, p.M)
+	zn := math.Pow(z, p.N)
 	return zm + p.Lambda/zn
 }
 
