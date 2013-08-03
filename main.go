@@ -2,12 +2,12 @@ package main
 
 import (
 	"fractal"
+	"image"
 	"log"
 	"net/http"
-	"image"
 )
 
-var _ = image.Rect(0,0,1,1)
+var _ = image.Rect(0, 0, 1, 1)
 var _ = fractal.SingPert{}
 
 func init() {
