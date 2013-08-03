@@ -4,3 +4,4 @@ main
 src/
 pkg/
 go-pert
+go-pert.test
