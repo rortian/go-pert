@@ -1,12 +1,13 @@
 package main
 
 import (
-	"fractal"
 	"image"
 	"image/color"
-	"paint"
 	"sync"
 	"testing"
+
+	"github.com/rortian/go-pert/fractal"
+	"github.com/rortian/go-pert/paint"
 )
 
 var m = 2.0

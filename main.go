@@ -1,10 +1,11 @@
 package main
 
 import (
-	"fractal"
 	"image"
 	"log"
 	"net/http"
+
+	"github.com/rortian/go-pert/fractal"
 )
 
 var _ = image.Rect(0, 0, 1, 1)
