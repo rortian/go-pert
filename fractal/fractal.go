@@ -9,9 +9,23 @@ type SingPert struct {
 	M, N, Lambda complex128
 }
 
+func Power(z complex128,n int) complex128 {
+  if(n < 0) {
+    return 1 / Power(z,-n)
+  }
+  switch n {
+    case 0: return complex(1.0,0)
+    case 1: return z
+    case 2: return z*z;
+    case 3: return z*z*z;
+    case 4: return z*z*z*z;
+    default: return z*z*z*z*z*Power(z,n - 5)
+  }
+}
+
 func (p *SingPert) Step(z complex128) complex128 {
-	zm := cmplx.Pow(z, p.M)
-	zn := cmplx.Pow(z, p.N)
+	zm := Power(z, p.M)
+	zn := Power(z, p.N)
 	return zm + p.Lambda/zn
 }
 
