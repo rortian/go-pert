@@ -5,3 +5,8 @@ src/
 pkg/
 go-pert
 go-pert.test
+node_modules
+dist
+.tmp
+.sass-cache
+app/bower_components
