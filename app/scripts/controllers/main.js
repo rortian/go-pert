@@ -7,4 +7,5 @@ angular.module('goPertApp')
       'AngularJS',
       'Karma'
     ];
+    $scope.SingPert = { m: 2, n: 2, l: { x: 1e-6, y: 0}} 
   });
